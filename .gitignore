@@ -1,0 +1,17 @@
+/bootloader
+/modules
+/tools
+/zephyr
+/mbedtls
+/nrf
+/nrfxlib
+/tes
+/test
+/.vscode
+/documentation
+/tooling/twister-map.yml
+build*
+twister-out*
+.gdb_history
+/ext
+.venv
