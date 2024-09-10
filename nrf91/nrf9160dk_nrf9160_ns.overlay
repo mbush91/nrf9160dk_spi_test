@@ -16,14 +16,13 @@
 * RTS |   P0.24 | -- nRF interface line 9 -- | P0.18 (nRESET) | (in v0.14.0 or later) CTS, nRESET is configurable
 */
 
-#include <nrf9160dk_uart1_on_if0_3.dtsi>
-
 &pinctrl {
     spi1_default_pss: spi1_default_pss {
         group1 {
-            psels = <NRF_PSEL(SPIM_SCK, 0, 17)>,
-                <NRF_PSEL(SPIM_MISO, 0, 18)>,
-                <NRF_PSEL(SPIM_MOSI, 0,19)>;
+            psels = <NRF_PSEL(SPIS_SCK, 0, 17)>,
+                <NRF_PSEL(SPIS_MISO, 0, 18)>,
+                <NRF_PSEL(SPIS_MOSI, 0,19)>,
+                <NRF_PSEL(SPIS_CSN, 0, 21)>;
                 // cs = P0.21
             nordic,drive-mode = <NRF_DRIVE_H0H1>;
         };
@@ -31,10 +30,10 @@
 
     spi1_sleep_pss: spi1_sleep_pss {
         group1 {
-            psels = <NRF_PSEL(SPIM_SCK, 0, 17)>,
-            <NRF_PSEL(SPIM_MISO, 0, 20)>,
-            <NRF_PSEL(SPIM_MOSI, 0,15)>;
-            // cs = P0.21
+            psels = <NRF_PSEL(SPIS_SCK, 0, 17)>,
+            <NRF_PSEL(SPIS_MISO, 0, 18)>,
+            <NRF_PSEL(SPIS_MOSI, 0,19)>,
+            <NRF_PSEL(SPIS_CSN, 0, 21)>;
             low-power-enable;
         };
     };
@@ -45,11 +44,29 @@
     status = "disabled";
 };
 
-&spi1 {
-    status = "okay";
-    cs-gpios = <&gpio0 21 GPIO_ACTIVE_LOW>;
-    pinctrl-0 = < &spi1_default_pss >;
-    pinctrl-1 = < &spi1_sleep_pss >;
+the_spi_slave: &spi1 {
     compatible = "nordic,nrf-spis";
+    status = "okay";
     def-char = <0x00>;
+
+    pinctrl-0 = < &spi1_default_pss>;
+    pinctrl-1 = < &spi1_sleep_pss>;
+    pinctrl-names = "default", "sleep";
+    
+    // slave:spi-device@0 {
+    //     reg = <0>;
+    //     irq-gpios = <&gpio0 21 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;
+    // };
+
+    // slave: bt-hci@0 {
+    //     compatible = "zephyr,bt-hci-spi-slave";
+    //     reg = <0>;
+    //     irq-gpios = <&gpio0 21 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;
+    // };
 };
+
+// slave: bt-hci@0 {
+//     compatible = "zephyr,bt-hci-spi-slave";
+//     reg = <0>;
+//     irq-gpios = <&gpio0 21 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;
+// };
