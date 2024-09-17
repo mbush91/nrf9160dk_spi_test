@@ -4,10 +4,10 @@
 *    The connections are as follows:
 *
 *     | nRF9160 |                            |    nRF52840    |
-* RX  |   P0.17 | -- nRF interface line 0 -- | P0.17          | TX
-* TX  |   P0.18 | -- nRF interface line 1 -- | P0.20          | RX
-* CTS |   P0.19 | -- nRF interface line 2 -- | P0.15          | RTS
-*     |   P0.21 | -- nRF interface line 3 -- | P0.22          | DEFAULT CTS
+* SCK |   P0.17 | -- nRF interface line 0 -- | P0.17          | SCK
+* MISO|   P0.18 | -- nRF interface line 1 -- | P0.20          | MISO
+* MOSI|   P0.19 | -- nRF interface line 2 -- | P0.15          | MOSI
+* CS  |   P0.21 | -- nRF interface line 3 -- | P0.22          | CS
 *     |   P0.22 | -- nRF interface line 4 -- | P1.04          |
 *     |   P0.23 | -- nRF interface line 5 -- | P1.02          |
 *     |   COEX0 | -- nRF interface line 6 -- | P1.13          |
@@ -23,7 +23,6 @@
                 <NRF_PSEL(SPIS_MISO, 0, 18)>,
                 <NRF_PSEL(SPIS_MOSI, 0,19)>,
                 <NRF_PSEL(SPIS_CSN, 0, 21)>;
-                // cs = P0.21
             nordic,drive-mode = <NRF_DRIVE_H0H1>;
         };
     };
@@ -44,29 +43,21 @@
     status = "disabled";
 };
 
+&gpio0 {
+    status = "okay";
+};
+
+&gpiote {
+    status = "okay";
+};
+
 the_spi_slave: &spi1 {
     compatible = "nordic,nrf-spis";
     status = "okay";
-    def-char = <0x00>;
+    def-char = <0xff>;
 
     pinctrl-0 = < &spi1_default_pss>;
     pinctrl-1 = < &spi1_sleep_pss>;
     pinctrl-names = "default", "sleep";
     
-    // slave:spi-device@0 {
-    //     reg = <0>;
-    //     irq-gpios = <&gpio0 21 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;
-    // };
-
-    // slave: bt-hci@0 {
-    //     compatible = "zephyr,bt-hci-spi-slave";
-    //     reg = <0>;
-    //     irq-gpios = <&gpio0 21 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;
-    // };
 };
-
-// slave: bt-hci@0 {
-//     compatible = "zephyr,bt-hci-spi-slave";
-//     reg = <0>;
-//     irq-gpios = <&gpio0 21 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;
-// };

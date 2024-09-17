@@ -4,10 +4,10 @@
 *    The connections are as follows:
 *
 *     | nRF9160 |                            |    nRF52840    |
-* RX  |   P0.17 | -- nRF interface line 0 -- | P0.17          | TX
-* TX  |   P0.18 | -- nRF interface line 1 -- | P0.20          | RX
-* CTS |   P0.19 | -- nRF interface line 2 -- | P0.15          | RTS
-*     |   P0.21 | -- nRF interface line 3 -- | P0.22          | DEFAULT CTS
+* SCK |   P0.17 | -- nRF interface line 0 -- | P0.17          | SCK
+* MISO|   P0.18 | -- nRF interface line 1 -- | P0.20          | MISO
+* MOSI|   P0.19 | -- nRF interface line 2 -- | P0.15          | MOSI
+* CS  |   P0.21 | -- nRF interface line 3 -- | P0.22          | CS
 *     |   P0.22 | -- nRF interface line 4 -- | P1.04          |
 *     |   P0.23 | -- nRF interface line 5 -- | P1.02          |
 *     |   COEX0 | -- nRF interface line 6 -- | P1.13          |
@@ -45,9 +45,16 @@
     status = "disabled";
 };
 
-&spi1 {
+the_spi_master: &spi1 {
+    compatible = "nordic,nrf-spim";
     status = "okay";
-    cs-gpios = <&gpio0 22 GPIO_ACTIVE_LOW>;
+    
     pinctrl-0 = < &spi1_default_pss >;
     pinctrl-1 = < &spi1_sleep_pss >;
+    pinctrl-names = "default", "sleep";
+    cs-gpios = <&gpio0 22 GPIO_ACTIVE_LOW>;
+
+    reg_the_spi_master: spi-dev-a@0 {
+		reg = <0>;
+	};
 };
